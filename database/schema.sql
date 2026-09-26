@@ -1,6 +1,7 @@
 -- =============================================================================
 -- RaceManager — Esquema de Base de Datos (MySQL)
--- Entrega: Arquitectura y Módulos (31/08 – 27/09)
+-- Versión 2 (2da entrega): importación sin duplicados y publicación auditada.
+-- Para bases creadas con la versión 1 aplicar database/migraciones/002_*.sql
 -- =============================================================================
 -- Motor: MySQL 8.x
 -- Charset: utf8mb4
@@ -165,6 +166,8 @@ CREATE TABLE carrera (
   estado          ENUM('PROGRAMADA', 'CARGADA', 'PUBLICADA', 'CANCELADA')
                   NOT NULL DEFAULT 'PROGRAMADA',
   notas           TEXT         NULL,
+  publicada_en    DATETIME(3)  NULL,      -- momento de la publicación (auditoría)
+  publicada_por   BIGINT UNSIGNED NULL,   -- Manager/Admin que publicó
   creado_en       DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   actualizado_en  DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (id),
@@ -172,7 +175,11 @@ CREATE TABLE carrera (
   KEY ix_carrera_estado (estado),
   CONSTRAINT fk_carrera_liga      FOREIGN KEY (liga_id)      REFERENCES liga (id),
   CONSTRAINT fk_carrera_categoria FOREIGN KEY (categoria_id) REFERENCES categoria (id),
-  CONSTRAINT fk_carrera_circuito  FOREIGN KEY (circuito_id)  REFERENCES circuito (id)
+  CONSTRAINT fk_carrera_circuito  FOREIGN KEY (circuito_id)  REFERENCES circuito (id),
+  CONSTRAINT fk_carrera_publicada_por FOREIGN KEY (publicada_por) REFERENCES usuario (id),
+  -- Una carrera PUBLICADA siempre registra cuándo y quién la publicó
+  CONSTRAINT ck_carrera_publicacion CHECK (
+    estado <> 'PUBLICADA' OR (publicada_en IS NOT NULL AND publicada_por IS NOT NULL))
 ) ENGINE=InnoDB;
 
 CREATE TABLE carrera_equipo (
@@ -248,14 +255,29 @@ CREATE TABLE importacion_carrera (
   manager_id      BIGINT UNSIGNED NOT NULL,
   nombre_archivo  VARCHAR(255) NOT NULL,
   ruta_almacenada VARCHAR(500) NULL,
-  estado          ENUM('PENDIENTE', 'PROCESADA', 'ERROR') NOT NULL DEFAULT 'PENDIENTE',
+  hash_sha256     CHAR(64)     NOT NULL,  -- huella del contenido: detecta archivos repetidos
+  tamano_bytes    INT UNSIGNED NOT NULL,
+  -- PENDIENTE: recibido | PROCESADA: datos extraídos, en revisión del Manager
+  -- CONFIRMADA: resultados aceptados | RECHAZADA: descartada por el Manager | ERROR: archivo inválido
+  estado          ENUM('PENDIENTE', 'PROCESADA', 'CONFIRMADA', 'RECHAZADA', 'ERROR')
+                  NOT NULL DEFAULT 'PENDIENTE',
   mensaje_error   TEXT NULL,
   cargado_en      DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   procesado_en    DATETIME(3) NULL,
+  revisado_por    BIGINT UNSIGNED NULL,
+  revisado_en     DATETIME(3) NULL,
+  -- Columna calculada: vale carrera_id solo si la importación está CONFIRMADA
+  carrera_confirmada_id BIGINT UNSIGNED
+                  AS (IF(estado = 'CONFIRMADA', carrera_id, NULL)) STORED,
   PRIMARY KEY (id),
   KEY ix_importacion_carrera (carrera_id),
+  -- El mismo archivo no puede cargarse dos veces para la misma carrera
+  UNIQUE KEY uk_importacion_carrera_hash (carrera_id, hash_sha256),
+  -- Como máximo una importación CONFIRMADA por carrera (evita resultados duplicados)
+  UNIQUE KEY uk_importacion_una_confirmada (carrera_confirmada_id),
   CONSTRAINT fk_importacion_carrera FOREIGN KEY (carrera_id) REFERENCES carrera (id),
-  CONSTRAINT fk_importacion_manager FOREIGN KEY (manager_id) REFERENCES usuario (id)
+  CONSTRAINT fk_importacion_manager FOREIGN KEY (manager_id) REFERENCES usuario (id),
+  CONSTRAINT fk_importacion_revisor FOREIGN KEY (revisado_por) REFERENCES usuario (id)
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------------------------
