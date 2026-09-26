@@ -1,0 +1,45 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.iml
+.idea/
+.vscode/
+*.swp
+
+# Temp extracts
+.tmp-*/
+*.zip
+
+# Backend
+backend/.gradle/
+backend/build/
+backend/out/
+backend/bin/
+*.class
+*.jar
+*.war
+!backend/gradle/wrapper/gradle-wrapper.jar
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+**/application-local.properties
+**/application-local.yml
+
+# Logs
+*.log
+npm-debug.log*
+
+# Generados de TypeScript
+*.tsbuildinfo
+
+# Reportes y respaldos locales
+frontend/coverage/
+*.bundle
