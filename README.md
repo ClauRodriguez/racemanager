@@ -1,168 +1,111 @@
-# 🏁 RaceManager
+# RaceManager
 
-### Gestión Integral de Ligas y Competencias de Simracing
+Gestión integral de ligas y competencias de simracing (foco inicial: Assetto Corsa).
 
-**Trabajo Final**
-
----
-
-## 👥 Integrantes
-
-* **Diego Alejandro Velardes**
-* **Claudio Rodriguez**
-* **Gaston Cejas**
-
-### 👨‍🏫 Tutor
-
-**Juan Ignacio Schiavonni**
+**Trabajo Final** — Diego Velardes · Claudio Rodriguez · Gastón Cejas  
+**Tutor:** Juan Ignacio Schiavonni
 
 ---
 
-## 📌 Descripción
+## Descripción
 
-**RaceManager** es una plataforma web propuesta para la gestión integral de ligas y competencias de **simracing**, con foco inicial en **Assetto Corsa**.
+Plataforma web para centralizar ligas, equipos, pilotos, vehículos, circuitos y carreras. El Manager/Organizador carga los datos oficiales; equipos y pilotos consultan resultados y estadísticas publicados.
 
-El sistema busca centralizar la información de ligas, equipos, pilotos, vehículos, circuitos y carreras, permitiendo que los organizadores carguen los datos oficiales de las competencias y que posteriormente equipos y pilotos puedan consultar sus resultados y estadísticas.
-
----
-
-## 🎯 Objetivo
-
-Desarrollar una plataforma web que permita gestionar competencias de simracing y centralizar sus resultados, incorporando herramientas para consultar y analizar el rendimiento de pilotos y equipos.
-
----
-
-## 🛠️ Tecnologías
-
-### Backend
-
-* Java
-* Spring Boot
-* Spring Security
-* Spring Data JPA
-* JWT
-* Gradle
-
-### Frontend
-
-* React
-* Vite
-* React Router
-* Axios
-* Bootstrap
-
-### Base de datos
-
-* MySQL
-
-### Integración
-
-* Assetto Corsa
-* REST API
-* JSON
-
-### Herramientas
-
-* Git / GitHub
-* IntelliJ IDEA
-* Visual Studio Code
-* MySQL Workbench
-* Postman
-
----
-
-## 🏗️ Arquitectura propuesta
-
-El sistema utilizará una arquitectura cliente-servidor:
+## Arquitectura
 
 ```text
-┌──────────────┐
-│   Frontend   │
-│    React     │
-└──────┬───────┘
-       │ REST API
-       ▼
-┌──────────────┐
-│   Backend    │
-│ Spring Boot  │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│    MySQL     │
-└──────────────┘
-
-Assetto Corsa
-      │
-      │ Archivos de resultados
-      ▼
-RaceManager API
+Frontend (React + Vite)  →  API REST (Spring Boot)  →  MySQL
+                                      ↑
+                    Importación de archivos Assetto Corsa
 ```
 
----
+Detalle: [`docs/arquitectura/modulos.md`](docs/arquitectura/modulos.md)
 
-## 🚀 Roadmap
+## Tecnologías
 
-| Etapa | Descripción                             | Estado      |
-| ----- | --------------------------------------- | ----------- |
-| 1     | Análisis y diseño                       | 🟡 Actual   |
-| 2     | Desarrollo Backend                      | ⚪ Pendiente |
-| 3     | Desarrollo Frontend                     | ⚪ Pendiente |
-| 4     | Procesamiento de datos de Assetto Corsa | ⚪ Pendiente |
-| 5     | Estadísticas y análisis                 | ⚪ Pendiente |
-| 6     | Pruebas y despliegue                    | ⚪ Pendiente |
+| Capa | Stack |
+|---|---|
+| Backend | Java, Spring Boot, Spring Security, Spring Data JPA, JWT, Gradle |
+| Frontend | React, Vite, React Router, Axios, Bootstrap |
+| Base de datos | MySQL 8 |
+| Integración | Archivos de resultados Assetto Corsa, REST, JSON |
 
----
-
-## 📁 Estructura del repositorio (posible estructura)
+## Estructura del repositorio
 
 ```text
 racemanager/
-│
-├── README.md
-├── .gitignore
-│
-├── docs/
-│   ├── propuesta/
-│   │   └── propuesta-proyecto.md
-│   │
-│   └── entregas/
-│       └── entrega-01/
-│           └── propuesta.md
-│
-├── backend/
-├── frontend/
-└── database/
+├── database/          # Esquema SQL (schema.sql)
+├── docs/              # Propuesta, arquitectura y modelo de datos
+├── backend/           # API Spring Boot (módulos de dominio)
+└── frontend/          # App React + Vite (módulos de UI)
 ```
 
----
+## Módulos en el repositorio
 
-## 📚 Documentación
+### Backend (`backend/src/main/java/com/racemanager/api/`)
 
-La documentación completa de la propuesta y las diferentes entregas se encuentra dentro de la carpeta:
+- `auth` — autenticación JWT
+- `usuario` — usuarios y roles
+- `liga` — ligas y categorías
+- `equipo` — equipos
+- `piloto` — pilotos
+- `vehiculo` — vehículos
+- `circuito` — circuitos
+- `carrera` — carreras y publicación
+- `sesion` — sesiones, resultados y vueltas
+- `importacion` — carga Assetto Corsa
+- `estadistica` — análisis de rendimiento
 
-```text
-docs/
+### Frontend (`frontend/src/modules/`)
+
+- `landing` · `auth` · `ligas` · `equipos` · `pilotos` · `carreras` · `estadisticas`
+
+### Base de datos
+
+- [`database/schema.sql`](database/schema.sql) — esquema MySQL
+- [`docs/db/modelo-datos.md`](docs/db/modelo-datos.md) — diagrama y descripción
+
+## Puesta en marcha rápida
+
+### 1. Base de datos
+
+```bash
+mysql -u root -p < database/schema.sql
 ```
 
-La propuesta completa del proyecto puede consultarse en:
+Ajustar usuario/clave en `backend/src/main/resources/application.properties`.
 
-`docs/propuesta/propuesta-proyecto.md`
+### 2. Backend
 
----
+```bash
+cd backend
+./gradlew bootRun
+```
 
-## 📌 Estado del proyecto
+Healthcheck: `GET http://localhost:8080/api/health`
 
-🟡 **Propuesta / Análisis inicial**
+### 3. Frontend
 
-El proyecto se encuentra actualmente en etapa de propuesta.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-El desarrollo del software todavía no ha comenzado. El repositorio será utilizado como espacio único para centralizar el código fuente, documentación, base de datos y demás componentes del proyecto.
+App: `http://localhost:5173`
 
----
+## Documentación
 
-## 🔗 Repositorio
+| Documento | Ruta |
+|---|---|
+| Propuesta | [`docs/propuesta/propuesta-proyecto.md`](docs/propuesta/propuesta-proyecto.md) |
+| Arquitectura y módulos | [`docs/arquitectura/modulos.md`](docs/arquitectura/modulos.md) |
+| Modelo de datos | [`docs/db/modelo-datos.md`](docs/db/modelo-datos.md) |
 
-Este repositorio constituye el **repositorio único de GitHub** del proyecto RaceManager.
+## Estado
 
-**URL:** `https://github.com/ClauRodriguez/racemanager`
+Entrega **Arquitectura y Módulos** (31/08 – 27/09): esquema de BD y estructura de módulos subidos al repositorio. Implementación de negocio pendiente (Etapa 2+).
+
+## Repositorio
+
+https://github.com/ClauRodriguez/racemanager
