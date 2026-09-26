@@ -43,9 +43,9 @@ Respaldo del estado previo a la consolidación: branch local `respaldo/2da-entre
 
 ```bash
 git fetch upstream
-git log --oneline --decorate upstream/main..feature/mejoras-mvp-2da-entrega
-git diff --stat upstream/main...feature/mejoras-mvp-2da-entrega
-git diff upstream/main...feature/mejoras-mvp-2da-entrega -- docs/propuesta   # contenido del equipo conservado
+git log --oneline --decorate upstream/main..feature/mejoras-mvp-consolidada-v3
+git diff --stat upstream/main...feature/mejoras-mvp-consolidada-v3
+git diff upstream/main...feature/mejoras-mvp-consolidada-v3 -- docs/propuesta   # contenido del equipo conservado
 ```
 
 Si `upstream/main` avanzó: `git merge upstream/main` (o `git rebase upstream/main` si la branch todavía
@@ -54,14 +54,14 @@ no se compartió), resolviendo conflictos **conservando ambas contribuciones**. 
 ## 5. Publicar en el fork y abrir el PR interno
 
 ```bash
-git push -u origin feature/mejoras-mvp-2da-entrega
+git push -u origin feature/mejoras-mvp-consolidada-v3
 ```
 
-PR: `GsuiteTdf/racemanager` → base `main`. Mantenerlo en **Draft** hasta que el CI del backend pase.
+PR: `GsuiteTdf/racemanager` → base `main`. El CI v3 verificó backend, frontend y MySQL; comprobar el estado de cualquier commit posterior antes del merge.
 En un fork, GitHub Actions viene deshabilitado: habilitarlo en la pestaña **Actions** del fork.
 
 ## 6. Proponer al repositorio del equipo (paso posterior, manual)
 
 Solo cuando Gastón haya revisado todo y el CI esté en verde: abrir desde GitHub un PR
-`GsuiteTdf:feature/mejoras-mvp-2da-entrega` → `ClauRodriguez:main` y pedir revisión a Diego y Claudio.
+`GsuiteTdf:main` → `ClauRodriguez:main` (después del merge interno) y pedir revisión a Diego y Claudio.
 No hacer push ni merge directo sobre el repositorio del equipo.

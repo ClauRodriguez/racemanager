@@ -9,7 +9,7 @@ Gestión integral de ligas y competencias de simracing (foco inicial: Assetto Co
 
 | Área | Estado |
 |---|---|
-| Seguridad (login BCrypt + JWT, roles, aislamiento por liga) | 🟦 Implementada; 1ra ejecución de CI: 13/32 pruebas OK; las 19 de integración fallaron por una propiedad de Jackson (corregida), **pendiente de re-ejecución** |
+| Seguridad (login BCrypt + JWT, roles, aislamiento por liga) | ✅ JWT, BCrypt, roles y pertenencia a ligas verificados en CI v3: **32 pruebas de backend superadas** (run 36270398824); faltan pruebas E2E y endurecimiento para producción |
 | Restricciones MySQL (duplicados, una importación confirmada, publicación auditada) | ✅ Verificadas en MySQL 8 (base nueva y migrada) |
 | Frontend: login conectado a la API y manejo de sesión | ✅ 7 pruebas Vitest, build y `npm audit` OK |
 | Gestión de ligas, pilotos y carreras | ⬜ Solo consulta de ligas; altas pendientes (iteración 2) |

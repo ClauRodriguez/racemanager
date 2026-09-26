@@ -4,7 +4,7 @@
 |---|---|
 | **Fecha del diagnóstico inicial** | 26/09/2026 (1ra entrega, "MVP y seguridad") |
 | **Fecha de consolidación** | 26/09/2026 (integración de 1ra y 2da entrega) |
-| **Branch** | `feature/mejoras-mvp-2da-entrega` (fork `GsuiteTdf/racemanager`) |
+| **Branch** | `feature/mejoras-mvp-consolidada-v3` (fork `GsuiteTdf/racemanager`) |
 | **Base** | `main` del repositorio del equipo, commit `127a38d` (sin commits nuevos a la fecha) |
 | **Versión original** | [`historico/diagnostico-1ra-entrega-original.md`](historico/diagnostico-1ra-entrega-original.md) (sin cambios) |
 
@@ -119,30 +119,30 @@ Auditoría completa de la 2da entrega. Hallazgos nuevos (prefijo `AUD`) y correc
 
 | ID | Hallazgo | Corrección | Commit |
 |---|---|---|---|
-| AUD-01 | El JWT no declaraba ni exigía **audiencia**. | Claim `aud=racemanager-web` y `requireAudience`. | `2dbab28` |
-| AUD-02 | Contraseñas de más de **72 bytes** (límite de BCrypt) podían producir un error 500 o compararse truncadas. | Rechazo con 401 y mismo tiempo de respuesta. | `2dbab28` |
-| AUD-03 | Orígenes CORS con espacios tras la coma no coincidían. | `trim()` de cada origen. | `2dbab28` |
-| AUD-04 | Clave JWT fija en las propiedades de prueba; contraseñas fijas en pruebas y en el workflow de CI. | Clave y contraseñas aleatorias por ejecución; MySQL de CI sin contraseña versionada. | `2dbab28`, `d2b6d02` |
-| AUD-05 | Nada impedía que un endpoint nuevo quedara accesible para **cualquier** usuario autenticado (p. ej. un PILOTO) por olvidar `@PreAuthorize`. | `EndpointsProtegidosTest`: falla si un endpoint no declara `@PreAuthorize` (excepto health, login y `/me`). | `2dbab28` |
-| AUD-06 | Faltaban pruebas de rol EQUIPO, ADMIN sobre liga ajena, token falsificado con rol ADMIN, encabezado no Bearer y rutas no declaradas. | Pruebas agregadas a `SeguridadIntegracionTest`. | `2dbab28` |
-| AUD-07 | El frontend no tenía pruebas; la primera versión de Vitest elegida tenía un aviso de seguridad. | Vitest 5 + jsdom, 7 pruebas; `npm audit` sin vulnerabilidades; CI con `npm test` y `npm audit`. | `bb985ad` |
-| AUD-08 | Las restricciones SQL solo se habían probado a mano. | `database/pruebas/verificar-restricciones.sql` + CI sobre base nueva y migrada. | `53b4580` |
-| AUD-09 | Sin JDK 21 local, Gradle fallaba en vez de obtenerlo. | Plugin `foojay-resolver-convention`. | `e4c4e58` |
+| AUD-01 | El JWT no declaraba ni exigía **audiencia**. | Claim `aud=racemanager-web` y `requireAudience`. | `a5b2f61` |
+| AUD-02 | Contraseñas de más de **72 bytes** (límite de BCrypt) podían producir un error 500 o compararse truncadas. | Rechazo con 401 y mismo tiempo de respuesta. | `a5b2f61` |
+| AUD-03 | Orígenes CORS con espacios tras la coma no coincidían. | `trim()` de cada origen. | `a5b2f61` |
+| AUD-04 | Clave JWT fija en las propiedades de prueba; contraseñas fijas en pruebas y en el workflow de CI. | Clave y contraseñas aleatorias por ejecución; MySQL de CI sin contraseña versionada. | `a5b2f61`, `5bddc81` |
+| AUD-05 | Nada impedía que un endpoint nuevo quedara accesible para **cualquier** usuario autenticado (p. ej. un PILOTO) por olvidar `@PreAuthorize`. | `EndpointsProtegidosTest`: falla si un endpoint no declara `@PreAuthorize` (excepto health, login y `/me`). | `a5b2f61` |
+| AUD-06 | Faltaban pruebas de rol EQUIPO, ADMIN sobre liga ajena, token falsificado con rol ADMIN, encabezado no Bearer y rutas no declaradas. | Pruebas agregadas a `SeguridadIntegracionTest`. | `a5b2f61` |
+| AUD-07 | El frontend no tenía pruebas; la primera versión de Vitest elegida tenía un aviso de seguridad. | Vitest 5 + jsdom, 7 pruebas; `npm audit` sin vulnerabilidades; CI con `npm test` y `npm audit`. | `ac790f7` |
+| AUD-08 | Las restricciones SQL solo se habían probado a mano. | `database/pruebas/verificar-restricciones.sql` + CI sobre base nueva y migrada. | `fa759ba` |
+| AUD-09 | Sin JDK 21 local, Gradle fallaba en vez de obtenerlo. | Plugin `foojay-resolver-convention`. | `cafa02e` |
 | AUD-10 | El README de la 2da entrega había quitado contenido que ya estaba en GitHub (herramientas y tabla de roadmap). | Contenido restituido y actualizado con el estado real. | commit `docs: integrar la auditoría…` |
 | AUD-11 | El remoto `origin` del repositorio local apuntaba al repositorio del equipo y no al fork. | `origin` → `GsuiteTdf/racemanager`; `upstream` → `ClauRodriguez/racemanager` **con push deshabilitado**. | configuración local (no versionada) |
-| AUD-17 | **Detectado por la 1ra ejecución de CI** (run `36268514108`): 19 de 32 pruebas del backend fallaron al iniciar el contexto de Spring. `spring.jackson.serialization.write-dates-as-timestamps` es una propiedad de Jackson 2; en Jackson 3 (Spring Boot 4) `WRITE_DATES_AS_TIMESTAMPS` pasó a `DateTimeFeature` y la propiedad no puede enlazarse. | Se elimina la propiedad. En Jackson 3 la característica está desactivada por defecto: las fechas siguen en ISO-8601. | `b59001b` |
+| AUD-17 | **Detectado por la 1ra ejecución de CI** (run `36268514108`): 19 de 32 pruebas del backend fallaron al iniciar el contexto de Spring. `spring.jackson.serialization.write-dates-as-timestamps` es una propiedad de Jackson 2; en Jackson 3 (Spring Boot 4) `WRITE_DATES_AS_TIMESTAMPS` pasó a `DateTimeFeature` y la propiedad no puede enlazarse. | Se elimina la propiedad. En Jackson 3 la característica está desactivada por defecto: las fechas siguen en ISO-8601. | ✅ Corregido y verificado: CI v3 compilación y 32 pruebas superadas |
 
 > Nota de historial: los seis commits de esta consolidación se reescribieron **solo en su mensaje**
 > (se quitaron líneas de coautoría y de sesión agregadas automáticamente); su contenido es idéntico.
-> Identificadores anteriores → nuevos: `4ef6bfb`→`2dbab28`, `679d8b0`→`e4c4e58`, `308885b`→`bb985ad`,
-> `e340bfe`→`d2b6d02`, `02cf7c7`→`53b4580`, `778ebc7`→`22adb34`.
+> Identificadores anteriores → nuevos: `4ef6bfb`→`a5b2f61`, `679d8b0`→`cafa02e`, `308885b`→`ac790f7`,
+> `e340bfe`→`5bddc81`, `02cf7c7`→`fa759ba`, `778ebc7`→`e0bc611`.
 
 Revisado sin cambios necesarios: expiración del token (60 min por defecto, configurable, > 0 obligatorio);
 rechazo de tokens sin firma, alterados, vencidos o de otro emisor; mensaje de login único para email inexistente,
 contraseña incorrecta y usuario inactivo, con comparación BCrypt siempre ejecutada; filtro JWT fuera del contexto
 de servlet (no se registra dos veces); ausencia de manejador genérico de `Exception` (no oculta los 403);
 `server.error.include-message=never` y `include-stacktrace=never`; compatibilidad **Java 21 + Spring Boot 4.0.0 +
-Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión documental, no compilada, ver §C.2).
+Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; compilación y pruebas superadas en CI v3, ver §C.2).
 
 ---
 
@@ -152,19 +152,19 @@ Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión docum
 
 | ID | Problema original | Evidencia | Riesgo | Corrección aplicada | Archivo(s) | Prueba de verificación | Estado |
 |---|---|---|---|---|---|---|---|
-| SEG-01 | `anyRequest().permitAll()`: todo endpoint nuevo quedaba público. | `SecurityConfig.java` de la línea de base. | Alto | 1ra: `denyAll`. 2da: públicos solo health y login; `/api/**` autenticado; resto `denyAll`. | `config/SecurityConfig.java` | `SeguridadIntegracionTest`: `sinTokenResponde401`, `rutaNoDeclaradaNoEsAccesibleSinAutenticacion` | 🟦 Implementado, pendiente de pruebas |
-| SEG-02 | `httpBasic` habilitado sin usuarios; confusión entre mecanismo y protección. | Idem. | Medio | Se desactivan httpBasic, formLogin y logout de sesión; `UserDetailsService` vacío evita el usuario en memoria. | `config/SecurityConfig.java` | `encabezadoAuthorizationSinBearerResponde401` | 🟦 Implementado, pendiente de pruebas |
+| SEG-01 | `anyRequest().permitAll()`: todo endpoint nuevo quedaba público. | `SecurityConfig.java` de la línea de base. | Alto | 1ra: `denyAll`. 2da: públicos solo health y login; `/api/**` autenticado; resto `denyAll`. | `config/SecurityConfig.java` | `SeguridadIntegracionTest`: `sinTokenResponde401`, `rutaNoDeclaradaNoEsAccesibleSinAutenticacion` | ✅ Verificado en CI v3 (backend 32 pruebas con H2) |
+| SEG-02 | `httpBasic` habilitado sin usuarios; confusión entre mecanismo y protección. | Idem. | Medio | Se desactivan httpBasic, formLogin y logout de sesión; `UserDetailsService` vacío evita el usuario en memoria. | `config/SecurityConfig.java` | `encabezadoAuthorizationSinBearerResponde401` | ✅ Verificado en CI v3 (backend 32 pruebas con H2) |
 | SEG-03a | Usuario `root` y contraseña vacía en el código. | `application.properties` de la línea de base. | Medio | Variables `DB_URL`, `DB_USER`, `DB_PASSWORD`; `.env.example` sin valores reales. | `application.properties`, `backend/.env.example` | Escaneo `detect-secrets` de todos los archivos versionados: solo falsos positivos por palabra clave. | ✅ Corregido y verificado |
 | SEG-03b | Sin usuario MySQL de mínimo privilegio ni política TLS. | Idem. | Medio | Usuario de aplicación documentado con `GRANT` mínimos. TLS a definir con el despliegue. | `database/README.md` | — | 🟨 Parcialmente corregido |
-| SEG-04 | Sin autenticación efectiva (login, hash, tokens). | Clases marcadoras en `auth/`, `usuario/`. | Alto | Login BCrypt; JWT HS256 con firma, vencimiento, emisor y audiencia; secreto obligatorio ≥ 32 bytes; mensaje de error único; rechazo de inactivos y de contraseñas > 72 bytes. | `auth/*`, `usuario/*` | `JwtServiceTest` (8 casos), `SeguridadIntegracionTest` (login correcto, credenciales inválidas, 400, > 72 bytes) | 🟦 Implementado, pendiente de pruebas |
-| SEG-05 | Sin permisos por rol. | Sin `@PreAuthorize`. | Alto | `@PreAuthorize` por endpoint; `EndpointsProtegidosTest` impide endpoints sin regla. | `liga/LigaController.java`, `src/test/.../EndpointsProtegidosTest.java` | `pilotoNoAccedeALaGestionDeLigas`, `equipoNoAccedeALaGestionDeLigas`, `adminVeTodasLasLigas` | 🟦 Implementado, pendiente de pruebas |
-| SEG-06 | Sin control de pertenencia: un organizador podía acceder a otra liga cambiando el id. | Sin servicios ni reglas. | Alto | `LigaAccessGuard`: ADMIN todas, MANAGER solo `manager_id` propio, liga inexistente = 403. Hoy solo existen endpoints de **consulta** de ligas; no hay endpoints de modificación. | `liga/LigaAccessGuard.java` | `managerAccedeASuLigaPeroNoALaAjena`, `ligaInexistenteSeTrataComoAjena`, `LigaAccessGuardTest` (5 casos) | 🟦 Implementado, pendiente de pruebas (extender a carreras, pilotos e importaciones) |
+| SEG-04 | Sin autenticación efectiva (login, hash, tokens). | Clases marcadoras en `auth/`, `usuario/`. | Alto | Login BCrypt; JWT HS256 con firma, vencimiento, emisor y audiencia; secreto obligatorio ≥ 32 bytes; mensaje de error único; rechazo de inactivos y de contraseñas > 72 bytes. | `auth/*`, `usuario/*` | `JwtServiceTest` (8 casos), `SeguridadIntegracionTest` (login correcto, credenciales inválidas, 400, > 72 bytes) | ✅ Verificado en CI v3 (backend 32 pruebas con H2) |
+| SEG-05 | Sin permisos por rol. | Sin `@PreAuthorize`. | Alto | `@PreAuthorize` por endpoint; `EndpointsProtegidosTest` impide endpoints sin regla. | `liga/LigaController.java`, `src/test/.../EndpointsProtegidosTest.java` | `pilotoNoAccedeALaGestionDeLigas`, `equipoNoAccedeALaGestionDeLigas`, `adminVeTodasLasLigas` | ✅ Verificado en CI v3 (backend 32 pruebas con H2) |
+| SEG-06 | Sin control de pertenencia: un organizador podía acceder a otra liga cambiando el id. | Sin servicios ni reglas. | Alto | `LigaAccessGuard`: ADMIN todas, MANAGER solo `manager_id` propio, liga inexistente = 403. Hoy solo existen endpoints de **consulta** de ligas; no hay endpoints de modificación. | `liga/LigaAccessGuard.java` | `managerAccedeASuLigaPeroNoALaAjena`, `ligaInexistenteSeTrataComoAjena`, `LigaAccessGuardTest` (5 casos) | ✅ Verificado para los endpoints de consulta actuales; extender a los futuros |
 | SEG-07 | Archivos importados repetidos o múltiples resultados confirmados. | `importacion_carrera` sin restricciones. | Alto | `UNIQUE (carrera_id, hash_sha256)`; una sola `CONFIRMADA` por carrera. | `database/schema.sql`, `migraciones/002_*.sql` | `verificar-restricciones.sql` ejecutado en MySQL 8.0.46 (base nueva y migrada): OK. Evidencia: `evidencias/2026-09-26-mysql.txt` | ✅ Corregido y verificado (nivel base de datos) |
 | SEG-08 | Validación de archivos, transacción y parser inexistentes. | Sin importador. | Alto | Límite de 2 MB; reglas documentadas (tipo, estructura, nombre generado, transacción). Parser bloqueado por falta de muestras. | `application.properties`, `docs/seguridad/seguridad.md` | — | 🟨 Parcialmente corregido |
 | SEG-09 | Publicación sin auditoría ni revisión previa. | `carrera.estado` sin controles. | Medio | `CHECK`: `PUBLICADA` exige `publicada_en` y `publicada_por`. Falta la lógica de revisión/publicación y el filtro de consultas públicas. | `database/schema.sql` | `verificar-restricciones.sql` (casos 4 y 5): OK | 🟨 Parcialmente corregido (restricción verificada; servicios pendientes) |
 | SEG-10 | Frontend sin autenticación ni manejo seguro del token. | `LoginPage.tsx` sin conexión. | Medio | Login real, token en `sessionStorage` con vencimiento, interceptor con `Bearer` y descarte ante 401; los roles del cliente solo ajustan la interfaz. | `frontend/src/services/*`, `LoginPage.tsx` | Vitest: 7 pruebas OK; build `tsc` estricto OK; `npm audit` 0. Evidencia: `evidencias/2026-09-26-frontend.txt` | ✅ Corregido y verificado (unitario); prueba E2E con backend pendiente |
-| TST-01 | Sin pruebas funcionales; `contextLoads` dependía de MySQL. | `RacemanagerApiApplicationTests.java`. | Alto | Perfil `test` con H2; pruebas de seguridad; pruebas frontend; prueba SQL; CI con los tres componentes. | `src/test/**`, `frontend/src/**/*.test.ts`, `database/pruebas/*`, `.github/workflows/ci.yml` | Frontend y SQL ejecutados OK. **Backend no ejecutado** (ver §C.2). | 🟨 Parcialmente corregido |
-| CFG-01 | Java 24 sin soporte. | `build.gradle`. | Medio | Java 21 LTS + resolución automática del JDK. | `build.gradle`, `settings.gradle` | Revisión de compatibilidad; compilación no ejecutada. | 🟦 Implementado, pendiente de pruebas |
+| TST-01 | Sin pruebas funcionales; `contextLoads` dependía de MySQL. | `RacemanagerApiApplicationTests.java`. | Alto | Perfil `test` con H2; pruebas de seguridad; pruebas frontend; prueba SQL; CI con los tres componentes. | `src/test/**`, `frontend/src/**/*.test.ts`, `database/pruebas/*`, `.github/workflows/ci.yml` | CI v3: backend (32 pruebas), frontend y SQL superados; falta prueba E2E completa. | 🟨 Parcialmente corregido |
+| CFG-01 | Java 24 sin soporte. | `build.gradle`. | Medio | Java 21 LTS + resolución automática del JDK. | `build.gradle`, `settings.gradle` | Compilación y pruebas de backend Java 21 superadas (CI v3). | ✅ CI v3: compilación y pruebas del backend con Java 21 |
 | CFG-02 | Claves fijas en pruebas y CI. | `application-test.properties`, `ci.yml` de la 2da entrega. | Bajo | Valores aleatorios; MySQL de CI sin contraseña versionada. | Idem | Escaneo `detect-secrets` | ✅ Corregido y verificado |
 | DOC-01 | MVP con casi toda la plataforma. | Propuesta original. | Alto | Flujo de punta a punta; tabla incluido/mínimo/fuera; plan por iteraciones. | `docs/mvp/alcance-mvp.md`, propuesta | Revisión de coherencia con el código (esta auditoría) | 🟨 Parcialmente corregido (falta aprobación del equipo y tutor) |
 | DOC-02 | Sin criterios de aceptación verificables. | Propuesta original. | Medio | CA-01..CA-08 con evidencia y estado; definición de terminado. | `docs/mvp/criterios-aceptacion.md` | Estados cotejados con el código real | ✅ Corregido y verificado |
@@ -178,7 +178,7 @@ Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión docum
 | AUD-14 | Token en `sessionStorage`: legible si existiera una falla XSS. | `sesion.ts`. | Bajo/Medio | Riesgo aceptado: React escapa el contenido, no se usa `dangerouslySetInnerHTML`, el token vence. Falta política CSP en el despliegue. | — | — | ⬜ Pendiente (riesgo aceptado) |
 | AUD-15 | `datos-desarrollo.sql` contiene el hash de una contraseña documentada. | Archivo versionado. | Bajo | Marcado "solo desarrollo"; nunca ejecutar en producción. | `database/datos-desarrollo.sql` | — | ⬜ Pendiente (riesgo aceptado para desarrollo) |
 | AUD-16 | Entidades JPA no validadas contra MySQL (`ddl-auto=none`). | `application.properties`. | Medio | Pasar a `validate` con una prueba contra MySQL. | — | — | ⬜ Pendiente |
-| AUD-17 | La API no arrancaba con Spring Boot 4: propiedad `spring.jackson.serialization.write-dates-as-timestamps` de Jackson 2. | CI run `36268514108`: 19/32 pruebas fallaron al iniciar el contexto. | Alto | Propiedad eliminada (Jackson 3 ya serializa fechas en ISO-8601). | `backend/src/main/resources/application.properties` | Re-ejecución del job *Backend* en CI | 🟦 Implementado, pendiente de pruebas |
+| AUD-17 | La API no arrancaba con Spring Boot 4: propiedad `spring.jackson.serialization.write-dates-as-timestamps` de Jackson 2. | CI run `36268514108`: 19/32 pruebas fallaron al iniciar el contexto. | Alto | Propiedad eliminada (Jackson 3 ya serializa fechas en ISO-8601). | `backend/src/main/resources/application.properties` | CI v3 (`36270398824`): `./gradlew test` OK | 🟦 Implementado, pendiente de pruebas |
 
 ### C.2 Pruebas ejecutadas y no ejecutadas
 
@@ -193,26 +193,25 @@ Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión docum
 | Backend — CI, 1ra ejecución (run `36268514108`, commit `778ebc7`) | `./gradlew test` (Temurin 21) | ❌ Compilación OK; **13 de 32 pruebas OK** (unitarias), **19 fallaron** al iniciar el contexto de Spring (AUD-17) | GitHub Actions |
 | MySQL — CI, 1ra ejecución | base nueva + base migrada + `verificar-restricciones.sql` | ✅ OK | GitHub Actions |
 | Frontend — CI, 1ra ejecución | `npm test`, `npm run build`, `npm audit --audit-level=high` | ✅ OK | GitHub Actions |
-| Backend — CI, 2da ejecución (con `b59001b`) | `./gradlew test` | ⏳ **Pendiente**: se ejecuta al publicar la branch | — |
+| Backend — CI v3 (run `36270398824`, corrección `e534b9e`) | `./gradlew test --no-daemon` (Temurin 21) | ✅ **BUILD SUCCESSFUL**, 32 pruebas superadas | [GitHub Actions](https://github.com/GsuiteTdf/racemanager/actions/runs/36270398824) |
+| MySQL — CI v3 | Base nueva, migración 002 y pruebas de restricciones | ✅ OK | [GitHub Actions](https://github.com/GsuiteTdf/racemanager/actions/runs/36270398824) |
+| Frontend — CI v3 | `npm ci`, siete pruebas Vitest, build y `npm audit` | ✅ OK | [GitHub Actions](https://github.com/GsuiteTdf/racemanager/actions/runs/36270398824) |
 
-De las **32 pruebas del backend**, las 13 unitarias (`JwtServiceTest`, `LigaAccessGuardTest`) pasaron en CI;
-las 19 que levantan el contexto (`SeguridadIntegracionTest`, `EndpointsProtegidosTest`,
-`RacemanagerApiApplicationTests`) fallaron por AUD-17 y **no se consideran superadas** hasta la próxima ejecución. Por eso los hallazgos que dependen de ellas
-figuran como 🟦. Al obtener un resultado, actualizar esta tabla y la matriz.
+En el primer CI pasaron las 13 pruebas unitarias, pero fallaron 19 al cargar el contexto de Spring. Tras retirar la propiedad incompatible de Jackson, **las 32 pruebas superaron CI v3**. La verificación utiliza H2 en memoria; aún falta demostrar un flujo E2E frontend + backend + MySQL.
 
 ### C.3 Tareas pendientes (priorizadas)
 
-1. **Volver a ejecutar las pruebas del backend** en CI con la corrección de AUD-17 y corregir lo que falle.
-2. Aprobar con el equipo y el tutor el alcance del MVP y las decisiones abiertas (`docs/mvp/alcance-mvp.md` §8).
-3. Conseguir 2 archivos reales anonimizados de Assetto Corsa y entrevistar a un organizador (DOC-03).
-4. Iteración 2: alta de liga, pilotos y carrera con `@ligaAccess` y la prueba "Manager A contra recurso de B".
-5. Iteración 3: importador transaccional con validación y hash (SEG-08) sobre las restricciones ya verificadas.
-6. Iteración 4: servicios de revisión/publicación y consultas que filtren `PUBLICADA` (SEG-09).
-7. Antes de desplegar: límite de intentos de login (AUD-13), CSP y HTTPS (AUD-14), usuario MySQL mínimo y TLS
+
+1. Aprobar con el equipo y el tutor el alcance del MVP y las decisiones abiertas (`docs/mvp/alcance-mvp.md` §8).
+2. Conseguir 2 archivos reales anonimizados de Assetto Corsa y entrevistar a un organizador (DOC-03).
+3. Iteración 2: alta de liga, pilotos y carrera con `@ligaAccess` y la prueba "Manager A contra recurso de B".
+4. Iteración 3: importador transaccional con validación y hash (SEG-08) sobre las restricciones ya verificadas.
+5. Iteración 4: servicios de revisión/publicación y consultas que filtren `PUBLICADA` (SEG-09).
+6. Antes de desplegar: límite de intentos de login (AUD-13), CSP y HTTPS (AUD-14), usuario MySQL mínimo y TLS
    (SEG-03b), `ddl-auto=validate` (AUD-16), revocación o verificación de usuario activo (AUD-12).
 
 **Conclusión:** respecto de la línea de base, la superficie abierta por defecto se cerró, existe autenticación y
 autorización por rol y por liga con pruebas escritas, la base de datos impide duplicados y publicaciones sin
 auditoría (verificado), y el frontend maneja la sesión con pruebas. El circuito completo de importación y
-publicación **no está implementado** y las pruebas de integración del backend **todavía no pasaron** (ver AUD-17): el proyecto no debe
+publicación **no está implementado** y las pruebas de integración del backend **pasaron en CI v3** (ver AUD-17): el proyecto no debe
 presentarse como MVP terminado ni como seguro para producción.
