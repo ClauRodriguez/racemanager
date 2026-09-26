@@ -336,6 +336,10 @@ Estas funcionalidades tendrán prioridad secundaria frente al núcleo principal:
 | JWT | Autenticación basada en tokens |
 | Gradle | Gestión de dependencias y construcción |
 
+### Justificación de la elección
+
+**Backend — Java + Spring Boot.** Se selecciona Java con Spring Boot por tratarse de tecnologías maduras para aplicaciones web con lógica de negocio y APIs REST. El equipo cuenta con conocimientos previos de Java adquiridos durante la carrera, lo que reduce el costo de aprendizaje. Spring Boot facilita la organización del backend por capas y se integra con Spring Data JPA y Spring Security, necesarias para persistencia, autenticación y autorización. Se utiliza **Java 21 (LTS)** para contar con soporte y actualizaciones de seguridad durante todo el proyecto.
+
 ### Frontend
 
 | Tecnología | Uso |
@@ -463,17 +467,6 @@ La estructura definitiva de entidades y relaciones será definida durante la eta
 - Implementación de autorización.
 - Documentación de endpoints.
 
-Backend — Java + Spring Boot
-
-Se selecciona Java con Spring Boot por tratarse de tecnologías
-maduras para aplicaciones web con lógica de negocio y APIs REST.
-El equipo cuenta con conocimientos previos de Java adquiridos
-durante la carrera, reduciendo el costo de aprendizaje.
-
-Spring Boot facilita la organización del backend por capas y
-se integra con Spring Data JPA y Spring Security, herramientas
-necesarias para persistencia, autenticación y autorización.
-
 ### Etapa 3 — Frontend
 - Configuración de React.
 - Implementación del login.
@@ -511,50 +504,41 @@ necesarias para persistencia, autenticación y autorización.
 
 ## Alcance del MVP
 
-Para garantizar la viabilidad del proyecto dentro del período académico, el producto mínimo viable contemplará:
+> Actualizado en la 2da entrega. El detalle completo está en [`docs/mvp/alcance-mvp.md`](../mvp/alcance-mvp.md) y los criterios verificables en [`docs/mvp/criterios-aceptacion.md`](../mvp/criterios-aceptacion.md).
 
-- Registro e inicio de sesión.
-- Roles de usuario (Administrador, Manager, Equipo, Piloto).
-- Gestión de ligas.
-- Gestión de equipos.
-- Gestión de pilotos.
-- Gestión de vehículos.
-- Gestión de circuitos.
-- Gestión de carreras.
-- Carga de archivos oficiales por parte del Manager.
-- Procesamiento e importación de resultados básicos (vueltas y tiempos).
-- Flujo de publicación de carreras (Cargada → Publicada).
-- Consulta de estadísticas básicas.
-- Dashboard.
-- API REST documentada.
-- Base de datos.
-- Despliegue online.
+La versión inicial del MVP incluía prácticamente todos los módulos a la vez (usuarios, cuatro roles, ligas, equipos, pilotos, vehículos, circuitos, carreras, importación, estadísticas, dashboard y despliegue). Para asegurar un producto funcional dentro del período académico, el MVP se delimita a **una competencia completa de principio a fin con datos reales**:
 
-El alcance exacto de los datos importados desde Assetto Corsa se ajustará una vez analizados archivos reales de competencias, priorizando inicialmente resultados, vueltas y tiempos por sobre datos más avanzados de telemetría.
+1. El Manager inicia sesión y el sistema identifica su liga.
+2. Registra una carrera y sus pilotos participantes.
+3. Carga un archivo real de Assetto Corsa; el backend valida formato, tamaño y duplicados.
+4. Revisa posiciones, vueltas y tiempos antes de confirmarlos.
+5. Publica la carrera; queda registrado quién y cuándo la publicó.
+6. El piloto consulta su resultado y su historial básico (solo carreras publicadas).
 
-Viabilidad técnica
-El equipo dispone de conocimientos en Java, bases de datos y
-desarrollo web. Las tecnologías seleccionadas poseen documentación
-y ecosistemas maduros.
+**Criterio de éxito:** completar este recorrido con datos auténticos, persistencia en MySQL y una interfaz funcional, sin intervenciones manuales en la base de datos.
 
-Viabilidad operativa
-La solución no requiere integración directa con servidores de
-Assetto Corsa. El Manager cargará los archivos de resultados
-manualmente, reduciendo dependencias externas.
+**Quedan fuera del MVP** (se mantienen como ampliaciones): gestión completa de vehículos, estadísticas avanzadas, comparación de sesiones y vueltas, dashboard con gráficos, notificaciones, exportaciones, telemetría e integración con otros simuladores.
 
-Viabilidad temporal
-Para asegurar la finalización dentro del período académico,
-se priorizará el flujo principal de carga, procesamiento,
-publicación y consulta. Las funciones analíticas avanzadas
-quedarán fuera del MVP.
+### Viabilidad
 
-Riesgo principal
-Desconocer inicialmente la estructura exacta de los archivos
-generados por Assetto Corsa.
+| Dimensión | Análisis |
+|---|---|
+| Técnica | El equipo dispone de conocimientos en Java, bases de datos y desarrollo web. Las tecnologías seleccionadas poseen documentación y ecosistemas maduros. |
+| Operativa | La solución no requiere integración directa con servidores de Assetto Corsa: el Manager carga los archivos de resultados manualmente, lo que reduce dependencias externas. |
+| Temporal | Se prioriza el flujo de carga, procesamiento, publicación y consulta. Las funciones analíticas avanzadas quedan fuera del MVP. |
 
-Mitigación
-Obtener archivos reales durante la etapa de análisis y limitar
-el primer importador a vueltas, tiempos y posiciones disponibles.
+### Riesgos principales
+
+| Riesgo | Mitigación |
+|---|---|
+| Desconocer inicialmente la estructura exacta de los archivos de Assetto Corsa | Obtener al menos dos archivos reales en la iteración 0 y limitar el primer importador a posiciones, vueltas y tiempos efectivamente presentes. |
+| Alcance excesivo | MVP delimitado al flujo de punta a punta; el resto se planifica como ampliación. |
+| Acceso cruzado entre ligas | Autorización por rol y por pertenencia a la liga en cada endpoint, con pruebas automáticas. |
+| Resultados duplicados o publicados por error | Huella SHA-256 del archivo, importación transaccional, revisión previa y publicación auditada. |
+
+### Validación de la problemática
+
+Las dificultades descritas en la sección *Problemática* son hipótesis del proyecto. Antes de cerrar el alcance se relevará al menos una liga real (proceso actual, herramientas, tiempo dedicado a publicar resultados, errores frecuentes y volumen de pilotos y carreras). La guía de relevamiento está en [`docs/mvp/alcance-mvp.md`](../mvp/alcance-mvp.md#5-validación-de-la-problemática).
 
 ## Posibilidades de transferencia
 
@@ -565,4 +549,4 @@ RaceManager podrá ser utilizado como base para una solución destinada a:
 - Organizadores de campeonatos de simracing.
 - Equipos y pilotos independientes de simracing.
 
-El sistema podrá evolucionar posteriormente hacia una plataforma especializada en análisis de rendimiento y gestión deportiva de simracing, incorporando nuevas fuentes de datos, otros simuladores y funcionalidades de análisis más avanzadas e incluso obtencion de datos de manera online.
+El sistema podrá evolucionar posteriormente hacia una plataforma especializada en análisis de rendimiento y gestión deportiva de simracing, incorporando nuevas fuentes de datos, otros simuladores y funcionalidades de análisis más avanzadas e incluso la obtención de datos en línea.
