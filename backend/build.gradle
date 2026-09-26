@@ -7,9 +7,10 @@ plugins {
 group = 'com.racemanager'
 version = '0.0.1-SNAPSHOT'
 
+// Java 21 (LTS). Java 24 no es LTS y ya no recibe actualizaciones de seguridad.
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(24)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
