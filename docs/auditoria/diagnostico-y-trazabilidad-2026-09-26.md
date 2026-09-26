@@ -119,17 +119,23 @@ Auditoría completa de la 2da entrega. Hallazgos nuevos (prefijo `AUD`) y correc
 
 | ID | Hallazgo | Corrección | Commit |
 |---|---|---|---|
-| AUD-01 | El JWT no declaraba ni exigía **audiencia**. | Claim `aud=racemanager-web` y `requireAudience`. | `4ef6bfb` |
-| AUD-02 | Contraseñas de más de **72 bytes** (límite de BCrypt) podían producir un error 500 o compararse truncadas. | Rechazo con 401 y mismo tiempo de respuesta. | `4ef6bfb` |
-| AUD-03 | Orígenes CORS con espacios tras la coma no coincidían. | `trim()` de cada origen. | `4ef6bfb` |
-| AUD-04 | Clave JWT fija en las propiedades de prueba; contraseñas fijas en pruebas y en el workflow de CI. | Clave y contraseñas aleatorias por ejecución; MySQL de CI sin contraseña versionada. | `4ef6bfb`, `e340bfe` |
-| AUD-05 | Nada impedía que un endpoint nuevo quedara accesible para **cualquier** usuario autenticado (p. ej. un PILOTO) por olvidar `@PreAuthorize`. | `EndpointsProtegidosTest`: falla si un endpoint no declara `@PreAuthorize` (excepto health, login y `/me`). | `4ef6bfb` |
-| AUD-06 | Faltaban pruebas de rol EQUIPO, ADMIN sobre liga ajena, token falsificado con rol ADMIN, encabezado no Bearer y rutas no declaradas. | Pruebas agregadas a `SeguridadIntegracionTest`. | `4ef6bfb` |
-| AUD-07 | El frontend no tenía pruebas; la primera versión de Vitest elegida tenía un aviso de seguridad. | Vitest 5 + jsdom, 7 pruebas; `npm audit` sin vulnerabilidades; CI con `npm test` y `npm audit`. | `308885b` |
-| AUD-08 | Las restricciones SQL solo se habían probado a mano. | `database/pruebas/verificar-restricciones.sql` + CI sobre base nueva y migrada. | `02cf7c7` |
-| AUD-09 | Sin JDK 21 local, Gradle fallaba en vez de obtenerlo. | Plugin `foojay-resolver-convention`. | `679d8b0` |
+| AUD-01 | El JWT no declaraba ni exigía **audiencia**. | Claim `aud=racemanager-web` y `requireAudience`. | `2dbab28` |
+| AUD-02 | Contraseñas de más de **72 bytes** (límite de BCrypt) podían producir un error 500 o compararse truncadas. | Rechazo con 401 y mismo tiempo de respuesta. | `2dbab28` |
+| AUD-03 | Orígenes CORS con espacios tras la coma no coincidían. | `trim()` de cada origen. | `2dbab28` |
+| AUD-04 | Clave JWT fija en las propiedades de prueba; contraseñas fijas en pruebas y en el workflow de CI. | Clave y contraseñas aleatorias por ejecución; MySQL de CI sin contraseña versionada. | `2dbab28`, `d2b6d02` |
+| AUD-05 | Nada impedía que un endpoint nuevo quedara accesible para **cualquier** usuario autenticado (p. ej. un PILOTO) por olvidar `@PreAuthorize`. | `EndpointsProtegidosTest`: falla si un endpoint no declara `@PreAuthorize` (excepto health, login y `/me`). | `2dbab28` |
+| AUD-06 | Faltaban pruebas de rol EQUIPO, ADMIN sobre liga ajena, token falsificado con rol ADMIN, encabezado no Bearer y rutas no declaradas. | Pruebas agregadas a `SeguridadIntegracionTest`. | `2dbab28` |
+| AUD-07 | El frontend no tenía pruebas; la primera versión de Vitest elegida tenía un aviso de seguridad. | Vitest 5 + jsdom, 7 pruebas; `npm audit` sin vulnerabilidades; CI con `npm test` y `npm audit`. | `bb985ad` |
+| AUD-08 | Las restricciones SQL solo se habían probado a mano. | `database/pruebas/verificar-restricciones.sql` + CI sobre base nueva y migrada. | `53b4580` |
+| AUD-09 | Sin JDK 21 local, Gradle fallaba en vez de obtenerlo. | Plugin `foojay-resolver-convention`. | `e4c4e58` |
 | AUD-10 | El README de la 2da entrega había quitado contenido que ya estaba en GitHub (herramientas y tabla de roadmap). | Contenido restituido y actualizado con el estado real. | commit `docs: integrar la auditoría…` |
 | AUD-11 | El remoto `origin` del repositorio local apuntaba al repositorio del equipo y no al fork. | `origin` → `GsuiteTdf/racemanager`; `upstream` → `ClauRodriguez/racemanager` **con push deshabilitado**. | configuración local (no versionada) |
+| AUD-17 | **Detectado por la 1ra ejecución de CI** (run `36268514108`): 19 de 32 pruebas del backend fallaron al iniciar el contexto de Spring. `spring.jackson.serialization.write-dates-as-timestamps` es una propiedad de Jackson 2; en Jackson 3 (Spring Boot 4) `WRITE_DATES_AS_TIMESTAMPS` pasó a `DateTimeFeature` y la propiedad no puede enlazarse. | Se elimina la propiedad. En Jackson 3 la característica está desactivada por defecto: las fechas siguen en ISO-8601. | `b59001b` |
+
+> Nota de historial: los seis commits de esta consolidación se reescribieron **solo en su mensaje**
+> (se quitaron líneas de coautoría y de sesión agregadas automáticamente); su contenido es idéntico.
+> Identificadores anteriores → nuevos: `4ef6bfb`→`2dbab28`, `679d8b0`→`e4c4e58`, `308885b`→`bb985ad`,
+> `e340bfe`→`d2b6d02`, `02cf7c7`→`53b4580`, `778ebc7`→`22adb34`.
 
 Revisado sin cambios necesarios: expiración del token (60 min por defecto, configurable, > 0 obligatorio);
 rechazo de tokens sin firma, alterados, vencidos o de otro emisor; mensaje de login único para email inexistente,
@@ -172,6 +178,7 @@ Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión docum
 | AUD-14 | Token en `sessionStorage`: legible si existiera una falla XSS. | `sesion.ts`. | Bajo/Medio | Riesgo aceptado: React escapa el contenido, no se usa `dangerouslySetInnerHTML`, el token vence. Falta política CSP en el despliegue. | — | — | ⬜ Pendiente (riesgo aceptado) |
 | AUD-15 | `datos-desarrollo.sql` contiene el hash de una contraseña documentada. | Archivo versionado. | Bajo | Marcado "solo desarrollo"; nunca ejecutar en producción. | `database/datos-desarrollo.sql` | — | ⬜ Pendiente (riesgo aceptado para desarrollo) |
 | AUD-16 | Entidades JPA no validadas contra MySQL (`ddl-auto=none`). | `application.properties`. | Medio | Pasar a `validate` con una prueba contra MySQL. | — | — | ⬜ Pendiente |
+| AUD-17 | La API no arrancaba con Spring Boot 4: propiedad `spring.jackson.serialization.write-dates-as-timestamps` de Jackson 2. | CI run `36268514108`: 19/32 pruebas fallaron al iniciar el contexto. | Alto | Propiedad eliminada (Jackson 3 ya serializa fechas en ISO-8601). | `backend/src/main/resources/application.properties` | Re-ejecución del job *Backend* en CI | 🟦 Implementado, pendiente de pruebas |
 
 ### C.2 Pruebas ejecutadas y no ejecutadas
 
@@ -182,16 +189,20 @@ Gradle 9.7.1 + jjwt 0.12.6** (Spring Boot 4 admite Java 17 a 25; revisión docum
 | Control negativo SQL | Prueba de restricciones sobre el esquema v1 sin migrar | ✅ Falla como se espera | idem |
 | Frontend | `npm test` (Vitest, 7 pruebas), `npm run build`, `npm audit` | ✅ OK, 0 vulnerabilidades | `evidencias/2026-09-26-frontend.txt` |
 | Secretos | `detect-secrets scan` sobre `git ls-files` | ✅ Sin secretos (2 falsos positivos por palabra clave) | este documento |
-| **Backend** | `./gradlew test` (JDK 21) | ⚠️ **No ejecutado**: el entorno no tenía acceso a `services.gradle.org`, `plugins.gradle.org` ni `repo.maven.apache.org` (proxy 403) | `evidencias/2026-09-26-backend-intento.txt` |
+| Backend (entorno local de trabajo) | `./gradlew test` (JDK 21) | ⚠️ **No ejecutado**: sin acceso a `services.gradle.org`, `plugins.gradle.org` ni `repo.maven.apache.org` (proxy 403) | `evidencias/2026-09-26-backend-intento.txt` |
+| Backend — CI, 1ra ejecución (run `36268514108`, commit `778ebc7`) | `./gradlew test` (Temurin 21) | ❌ Compilación OK; **13 de 32 pruebas OK** (unitarias), **19 fallaron** al iniciar el contexto de Spring (AUD-17) | GitHub Actions |
+| MySQL — CI, 1ra ejecución | base nueva + base migrada + `verificar-restricciones.sql` | ✅ OK | GitHub Actions |
+| Frontend — CI, 1ra ejecución | `npm test`, `npm run build`, `npm audit --audit-level=high` | ✅ OK | GitHub Actions |
+| Backend — CI, 2da ejecución (con `b59001b`) | `./gradlew test` | ⏳ **Pendiente**: se ejecuta al publicar la branch | — |
 
-Las **32 pruebas del backend** (`JwtServiceTest`, `LigaAccessGuardTest`, `SeguridadIntegracionTest`,
-`EndpointsProtegidosTest`, `RacemanagerApiApplicationTests`) están escritas pero **no se consideran superadas**
-hasta que corran en GitHub Actions o en la PC de un integrante. Por eso los hallazgos que dependen de ellas
+De las **32 pruebas del backend**, las 13 unitarias (`JwtServiceTest`, `LigaAccessGuardTest`) pasaron en CI;
+las 19 que levantan el contexto (`SeguridadIntegracionTest`, `EndpointsProtegidosTest`,
+`RacemanagerApiApplicationTests`) fallaron por AUD-17 y **no se consideran superadas** hasta la próxima ejecución. Por eso los hallazgos que dependen de ellas
 figuran como 🟦. Al obtener un resultado, actualizar esta tabla y la matriz.
 
 ### C.3 Tareas pendientes (priorizadas)
 
-1. **Ejecutar las pruebas del backend** (CI del Pull Request o `.\gradlew.bat test` con JDK 21) y corregir lo que falle.
+1. **Volver a ejecutar las pruebas del backend** en CI con la corrección de AUD-17 y corregir lo que falle.
 2. Aprobar con el equipo y el tutor el alcance del MVP y las decisiones abiertas (`docs/mvp/alcance-mvp.md` §8).
 3. Conseguir 2 archivos reales anonimizados de Assetto Corsa y entrevistar a un organizador (DOC-03).
 4. Iteración 2: alta de liga, pilotos y carrera con `@ligaAccess` y la prueba "Manager A contra recurso de B".
@@ -203,5 +214,5 @@ figuran como 🟦. Al obtener un resultado, actualizar esta tabla y la matriz.
 **Conclusión:** respecto de la línea de base, la superficie abierta por defecto se cerró, existe autenticación y
 autorización por rol y por liga con pruebas escritas, la base de datos impide duplicados y publicaciones sin
 auditoría (verificado), y el frontend maneja la sesión con pruebas. El circuito completo de importación y
-publicación **no está implementado** y las pruebas del backend **aún no se ejecutaron**: el proyecto no debe
+publicación **no está implementado** y las pruebas de integración del backend **todavía no pasaron** (ver AUD-17): el proyecto no debe
 presentarse como MVP terminado ni como seguro para producción.

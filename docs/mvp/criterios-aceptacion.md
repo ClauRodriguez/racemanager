@@ -9,8 +9,8 @@ Alcance y flujo: [`alcance-mvp.md`](alcance-mvp.md).
 
 | ID | Criterio | Evidencia | Estado |
 |---|---|---|---|
-| CA-01 | Autenticación y protección de endpoints | `SeguridadIntegracionTest`, `JwtServiceTest`, `EndpointsProtegidosTest` | 🟦 Implementado; pruebas escritas, **pendientes de ejecución** (CI) |
-| CA-02 | Aislamiento entre ligas | `SeguridadIntegracionTest`, `LigaAccessGuardTest` | 🟦 Implementado para consulta de ligas; pruebas pendientes de ejecución; extender a cada endpoint nuevo |
+| CA-01 | Autenticación y protección de endpoints | `SeguridadIntegracionTest`, `JwtServiceTest`, `EndpointsProtegidosTest` | 🟦 Implementado; pruebas unitarias OK en CI; pruebas de integración **pendientes de re-ejecución** (AUD-17) |
+| CA-02 | Aislamiento entre ligas | `SeguridadIntegracionTest`, `LigaAccessGuardTest` | 🟦 Implementado para consulta de ligas; `LigaAccessGuardTest` OK en CI, integración pendiente de re-ejecución; extender a cada endpoint nuevo |
 | CA-03 | Persistencia de carrera y participantes | Prueba de integración con MySQL | ⬜ Pendiente (iteración 2) |
 | CA-04 | Importación de un archivo real | Prueba con archivo anonimizado | ⬜ Pendiente (bloqueado por muestras) |
 | CA-05 | Rechazo de archivos inválidos, excesivos o repetidos | Pruebas negativas | 🟨 Duplicados y confirmación única **verificados en MySQL**; límite de 2 MB configurado; validación y parser pendientes |
